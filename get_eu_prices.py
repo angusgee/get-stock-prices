@@ -2,6 +2,7 @@ import yfinance as yf
 import pandas as pd
 import warnings
 import time
+import re
 
 warnings.filterwarnings('ignore', category=FutureWarning, module='yfinance.utils')
 
@@ -17,7 +18,7 @@ def add_exchange_to_ticker(symbol, exchange):
     if exchange == 'ATHENS EXCHANGE S.A. CASH MARKET':
         return symbol + '.AT'
     if exchange == 'BUDAPEST STOCK EXCHANGE':
-        return symbol + 'BUD.'
+        return symbol + '.BUD'
     if exchange == 'ELECTRONIC SHARE MARKET':
         return symbol
     if exchange == 'EURONEXT - EURONEXT PARIS':
@@ -60,24 +61,24 @@ def add_exchange_to_ticker(symbol, exchange):
         return symbol
 
 def get_ltp(ticker):
-    ticker = ticker.replace('.', '-')    
     stock_data = yf.Ticker(ticker)
-    # print(f"getting prices for {symbol}")
+    print(f"getting prices for {ticker}")
     price_data = stock_data.history(period='1d')
     if price_data.empty:
         return 0
     else:
         ltp = (round(price_data['Close'].iloc[-1], 2))
-        # print(f"LTP for {symbol}: {ltp}")
+        print(f"LTP for {ticker}: {ltp}")
         return ltp
 
 def main():
     start_time = time.time()
-    df = pd.read_csv('./eu-tickers.csv', header=None)
+    df = pd.read_csv('./test.csv', header=None)
     df.columns = ['Ticker', 'Exchange']
+    df['Ticker'] = df['Ticker'].str.replace(' ', '')
     df['Full ticker'] = df.apply(lambda row: add_exchange_to_ticker(row['Ticker'], row['Exchange']), axis=1)
     
-    # df['Last traded price'] = df['Ticker'].apply(get_ltp)
+    df['Last traded price'] = df['Full ticker'].apply(get_ltp)
     print(df.head)
     df.to_csv('eu-tickers-with-prices.csv', index=False)
     
