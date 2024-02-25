@@ -1,1 +1,1 @@
-# get-us-stock-prices
+# get-stock-prices
