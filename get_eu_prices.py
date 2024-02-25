@@ -73,7 +73,7 @@ def get_ltp(ticker):
 
 def main():
     start_time = time.time()
-    df = pd.read_csv('./test.csv', header=None)
+    df = pd.read_csv('./eu-tickers.csv', header=None)
     df.columns = ['Ticker', 'Exchange']
     df['Ticker'] = df['Ticker'].str.replace(' ', '')
     df['Full ticker'] = df.apply(lambda row: add_exchange_to_ticker(row['Ticker'], row['Exchange']), axis=1)
